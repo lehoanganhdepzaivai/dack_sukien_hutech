@@ -1,0 +1,12 @@
+{
+  "name": "HUTECH Event Intelligence",
+  "short_name": "HUTECH Events",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#F5F7FB",
+  "theme_color": "#006CAF",
+  "description": "Khám phá, đăng ký và quản lý sự kiện sinh viên.",
+  "orientation": "any",
+  "prefer_related_applications": false,
+  "icons": [{"src": "hutech_mark.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "any maskable"}]
+}
