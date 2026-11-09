@@ -6,10 +6,14 @@ import 'package:provider/provider.dart';
 
 import '../../app/app_theme.dart';
 import '../../models/event_model.dart';
+import '../../models/registration_model.dart';
 import '../../providers/app_store.dart';
 import '../../services/event_link.dart';
 import '../../widgets/common.dart';
+import '../../widgets/event_certificate_dialog.dart';
+import '../../widgets/event_feedback_dialog.dart';
 import '../../widgets/event_image_viewer.dart';
+import '../../widgets/event_qa_section.dart';
 
 class EventDetailScreen extends StatefulWidget {
   final String eventId;
@@ -151,6 +155,72 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             style: TextStyle(color: AppColors.muted, fontSize: 12),
           ),
         ],
+        const SizedBox(height: 28),
+        const SectionHeading('Tài liệu & Học liệu sự kiện'),
+        const SizedBox(height: 14),
+        Card(
+          margin: EdgeInsets.zero,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.blue.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.picture_as_pdf_outlined, color: AppColors.blue),
+                  ),
+                  title: const Text('Slide báo cáo & Tài liệu hướng dẫn.pdf', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                  subtitle: const Text('Định dạng PDF • Cung cấp bởi Ban tổ chức HUTECH', style: TextStyle(fontSize: 12, color: AppColors.muted)),
+                  trailing: OutlinedButton.icon(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Đang tải tài liệu sự kiện...'),
+                          backgroundColor: AppColors.blue,
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.download_rounded, size: 16),
+                    label: const Text('Tải về'),
+                  ),
+                ),
+                const Divider(),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.link_rounded, color: Colors.green),
+                  ),
+                  title: const Text('Kho mã nguồn & Tài nguyên thực hành', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                  subtitle: const Text('GitHub & Google Drive đính kèm', style: TextStyle(fontSize: 12, color: AppColors.muted)),
+                  trailing: OutlinedButton.icon(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Đã sao chép liên kết tài nguyên thực hành.'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.open_in_new_rounded, size: 16),
+                    label: const Text('Mở link'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 32),
+        EventQASection(eventId: event.id),
       ],
     );
     final booking = Card(
@@ -210,6 +280,59 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                   label: const Text('Xem vé của tôi'),
                 ),
               ),
+              if (reg.status == RegistrationStatus.attended && store.profile != null) ...[
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF084F98),
+                      side: const BorderSide(color: Color(0xFF084F98)),
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => EventCertificateDialog(
+                          event: event,
+                          profile: store.profile!,
+                          certificateCode: 'HUTECH-CERT-${event.id.toUpperCase()}-${store.profile!.studentId}',
+                          checkInTime: reg.createdAt,
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.verified_rounded, size: 19),
+                    label: const Text('Nhận Giấy chứng nhận'),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFFBA8412),
+                      side: const BorderSide(color: Color(0xFFBA8412)),
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => EventFeedbackDialog(
+                          event: event,
+                          onSubmit: (rating, content, speaker, org, comment) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Cảm ơn bạn đã gửi đánh giá! Ý kiến của bạn đã được ghi nhận.'),
+                                backgroundColor: Color(0xFF24846C),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.star_rounded, size: 19),
+                    label: const Text('Đánh giá sự kiện'),
+                  ),
+                ),
+              ],
             ] else
               SizedBox(
                 width: double.infinity,

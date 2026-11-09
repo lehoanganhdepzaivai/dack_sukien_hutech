@@ -352,6 +352,12 @@ class _Sidebar extends StatelessWidget {
       Icons.groups_outlined,
       '/admin/participants',
     ),
+    _nav(
+      context,
+      'Điểm danh QR',
+      Icons.qr_code_scanner_rounded,
+      '/admin/checkin',
+    ),
     const Padding(
       padding: EdgeInsets.symmetric(horizontal: 14, vertical: 20),
       child: Text(
@@ -365,11 +371,13 @@ class _Sidebar extends StatelessWidget {
       ),
     ),
     _nav(context, 'Khám phá sự kiện', Icons.open_in_new_rounded, '/events'),
+    _nav(context, 'Cơ sở HUTECH', Icons.apartment_outlined, '/campuses'),
   ];
 
   List<Widget> _studentNavigation(BuildContext context, AppStore store) => [
     _nav(context, 'Trang chủ', Icons.grid_view_rounded, '/', exact: true),
     _nav(context, 'Khám phá sự kiện', Icons.explore_outlined, '/events'),
+    _nav(context, 'Cơ sở HUTECH', Icons.apartment_outlined, '/campuses'),
     _nav(context, 'Lịch của tôi', Icons.calendar_month_outlined, '/calendar'),
     _nav(
       context,

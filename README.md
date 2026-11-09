@@ -48,20 +48,21 @@
 | 18 | **Lưu trữ bền vững (Persistence)** | IndexedDB trên Web, SQLite/JSON an toàn trên Android, tắt/mở không mất dữ liệu | **Hoàn thành** |
 | 19 | **Kiến trúc Supabase Backend** | Migration SQL chuẩn cho 18+ bảng, RLS đa vai trò, trigger tạo profile, Storage buckets | **Hoàn thành** |
 | 20 | **Chỉ báo kết nối Backend** | Hiển thị trạng thái máy chủ (Cloud/Cục bộ) trong trang quản trị, không dùng nhãn giả | **Hoàn thành** |
+| 21 | **Điểm danh QR Camera & Thủ công** | Quét QR vé bằng camera qua `mobile_scanner`, nhập mã thủ công, kiểm tra vé hợp lệ, tỷ lệ có mặt | **Hoàn thành** |
+| 22 | **Cơ sở đào tạo HUTECH** | Khám phá 2 cơ sở chính (Khu A & B, Khu E CNC), hướng dẫn di chuyển, lọc sự kiện theo cơ sở | **Hoàn thành** |
+| 23 | **Hỏi đáp sự kiện (Event Q&A)** | Đặt câu hỏi thắc mắc, phản hồi từ BTC, tính năng ghim thông báo quan trọng | **Hoàn thành** |
 
 ### 2.2 Chức năng đang triển khai (In Progress)
 | STT | Chức năng | Chi tiết kỹ thuật |
 |:---:|---|---|
-| 1 | **Tích hợp Camera quét QR thực tế** | Kết nối `mobile_scanner` trên Android và Web MediaDevices camera API |
-| 2 | **Phiên điểm danh bảo mật với RPC** | Kích hoạt transaction `check_in_ticket` trên Supabase với token mã hóa ngắn hạn |
-| 3 | **Giao diện phân quyền Ban tổ chức riêng**| Khu vực quản trị giới hạn theo sự kiện được phân công cho Organizer |
+| 1 | **Phiên điểm danh bảo mật với RPC** | Kích hoạt transaction `check_in_ticket` trên Supabase với token mã hóa ngắn hạn |
+| 2 | **Giao diện phân quyền Ban tổ chức riêng**| Khu vực quản trị giới hạn theo sự kiện được phân công cho Organizer |
 
 ### 2.3 Chức năng kế hoạch tương lai (Roadmap)
 | STT | Chức năng | Chi tiết kỹ thuật |
 |:---:|---|---|
 | 1 | **Push Notification từ xa** | Tích hợp Firebase Cloud Messaging (FCM) gửi thông báo đẩy |
 | 2 | **Khảo sát & Cấp chứng nhận tự động** | Chấm điểm khảo sát sau sự kiện và ký số mã chứng nhận điện tử |
-| 3 | **Phòng hỏi đáp Realtime Stream** | Đặt câu hỏi và ghim câu trả lời theo thời gian thực qua Supabase Stream |
 
 ---
 
@@ -140,5 +141,5 @@ flutter run -d emulator-5554
 ## 6. KẾT QUẢ KIỂM THỬ MÃ NGUỒN TỰ ĐỘNG
 
 - `flutter analyze --no-pub`: **No issues found!** (Không có lỗi, không có warning).
-- `flutter test --no-pub`: **115 / 115 tests passed** (Bao gồm kiểm thử domain logic, hàng đợi FIFO, xung đột lịch học, giao diện responsive, autoplay carousel và Supabase auth).
+- `flutter test --no-pub`: **120 / 120 tests passed** (Bao gồm kiểm thử domain logic, hàng đợi FIFO, xung đột lịch học, giao diện responsive, autoplay carousel, Supabase auth và Check-in điểm danh).
 - `flutter build web --release --no-pub`: **Build thành công thư mục `build/web`**.

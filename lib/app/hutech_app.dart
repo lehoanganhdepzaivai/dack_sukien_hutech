@@ -10,6 +10,7 @@ import '../screens/auth/forgot_password_screen.dart';
 import '../screens/public/home_screen.dart';
 import '../screens/public/events_screen.dart';
 import '../screens/public/event_detail_screen.dart';
+import '../screens/public/campuses_screen.dart';
 import '../screens/student/calendar_screen.dart';
 import '../screens/student/profile_screen.dart';
 import '../screens/student/schedule_screen.dart';
@@ -19,6 +20,7 @@ import '../screens/student/ticket_screen.dart';
 import '../screens/admin/admin_dashboard.dart';
 import '../screens/admin/admin_events_screen.dart';
 import '../screens/admin/admin_catalog_screen.dart';
+import '../screens/admin/check_in_screen.dart';
 import '../screens/admin/event_editor_screen.dart';
 import '../widgets/common.dart';
 import 'app_shell.dart';
@@ -99,6 +101,10 @@ class _HutechAppState extends State<HutechApp> {
             builder: (context, state) => const EventsScreen(),
           ),
           GoRoute(
+            path: '/campuses',
+            builder: (context, state) => const CampusesScreen(),
+          ),
+          GoRoute(
             path: '/events/:id',
             builder: (context, state) =>
                 EventDetailScreen(eventId: state.pathParameters['id']!),
@@ -157,6 +163,12 @@ class _HutechAppState extends State<HutechApp> {
           GoRoute(
             path: '/admin/participants',
             builder: (context, state) => const AdminParticipantsScreen(),
+          ),
+          GoRoute(
+            path: '/admin/checkin',
+            builder: (context, state) => CheckInScreen(
+              initialEventId: state.uri.queryParameters['eventId'],
+            ),
           ),
           GoRoute(
             path: '/forbidden',

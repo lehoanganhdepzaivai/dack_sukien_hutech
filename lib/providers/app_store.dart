@@ -243,6 +243,16 @@ class AppStore extends ChangeNotifier {
             item.status == RegistrationStatus.waitlisted,
       )
       .length;
+  int attendedCount(String eventId) => _registrations
+      .where(
+        (item) =>
+            item.eventId == eventId &&
+            item.status == RegistrationStatus.attended,
+      )
+      .length;
+
+  UserProfile? profileFor(String? userId) =>
+      _profiles.where((item) => item.id == userId).firstOrNull;
 
   Recommendation recommendation(EventModel event) => _recommendations.evaluate(
     event,
@@ -616,6 +626,77 @@ class AppStore extends ChangeNotifier {
     _readNotifications[_userId!] = notifications.length;
   });
 
+  Future<Map<String, dynamic>> checkInRegistration({
+    required String eventId,
+    required String ticketCode,
+    String method = 'qr',
+    String reason = '',
+  }) async {
+    _requireAdminOrOrganizer(eventId);
+    final cleanCode = ticketCode.trim().toLowerCase();
+    final target = _registrations.where(
+      (r) => r.id.trim().toLowerCase() == cleanCode,
+    ).firstOrNull;
+
+    if (target == null) {
+      return {
+        'success': false,
+        'message': 'Không tìm thấy vé với mã: $ticketCode',
+      };
+    }
+
+    if (target.eventId != eventId) {
+      final actualEvent = eventById(target.eventId);
+      return {
+        'success': false,
+        'message': 'Vé này thuộc sự kiện "${actualEvent?.title ?? target.eventId}", không đúng sự kiện đang điểm danh!',
+      };
+    }
+
+    final student = profileFor(target.userId);
+
+    if (target.status == RegistrationStatus.attended) {
+      return {
+        'success': false,
+        'message': 'Vé này đã được điểm danh trước đó.',
+        'student': student,
+        'registration': target,
+      };
+    }
+
+    if (target.status == RegistrationStatus.waitlisted) {
+      return {
+        'success': false,
+        'message': 'Đăng ký này đang ở hàng chờ (chưa có suất chính thức).',
+        'student': student,
+      };
+    }
+
+    if (target.status == RegistrationStatus.canceled) {
+      return {
+        'success': false,
+        'message': 'Đăng ký này đã bị hủy.',
+        'student': student,
+      };
+    }
+
+    final updated = target.copyWith(status: RegistrationStatus.attended);
+    await _commit(() {
+      _registrations = _registrations
+          .map((r) => r.id == target.id ? updated : r)
+          .toList();
+    });
+
+    return {
+      'success': true,
+      'message': 'Điểm danh thành công!',
+      'student': student,
+      'registration': updated,
+      'timestamp': _clock(),
+      'method': method,
+    };
+  }
+
   void _validateEvent(EventModel event) {
     if (event.title.trim().isEmpty ||
         event.subtitle.trim().isEmpty ||
@@ -711,6 +792,12 @@ class AppStore extends ChangeNotifier {
 
   void _requireAdmin() {
     if (!isAdmin) throw const DomainException('Bạn không có quyền quản trị.');
+  }
+
+  void _requireAdminOrOrganizer([String? eventId]) {
+    if (!isAdmin && !isOrganizer) {
+      throw const DomainException('Bạn không có quyền quản trị hoặc tổ chức sự kiện.');
+    }
   }
 
   Future<T> _commit<T>(T Function() change) {
